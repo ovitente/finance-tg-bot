@@ -1,7 +1,7 @@
 google_sheets_token: asdasd
 
 telegram:
-  token: asd
+  token: WOOHOO
   bot_id: x8
 
 allowed_users:

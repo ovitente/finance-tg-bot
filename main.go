@@ -10,18 +10,18 @@ import (
 )
 
 type ConfigFile struct {
-	GoogleSheets string       `yaml:google_sheets_token`
-	Telegram     TelegramOpts `yaml:telegram`
+	GoogleSheets string `yaml:google_sheets_token`
+	Telegram     TgOpts `yaml:telegram`
 	// AllowedUsers []string `yaml:allowed_users`
 }
 
-type TelegramOpts struct {
+type TgOpts struct {
 	Token string `yaml:token`
 	BotId string `yaml:bot_id`
 }
 
 func appConf() *ConfigFile {
-	var confPath = "./config.yaml"
+	var confPath = "./config.yml"
 	var cf = new(ConfigFile)
 
 	file, err := os.Open(confPath)
