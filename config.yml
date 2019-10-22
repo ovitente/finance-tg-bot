@@ -1,5 +1,4 @@
-google_sheets:
-  token: asdasd
+google_sheets_token: asdasd
 
 telegram:
   token: asd
