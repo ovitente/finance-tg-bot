@@ -22,7 +22,7 @@ type TgOpts struct {
 
 func appConf() *ConfigFile {
 	var confPath = "./config.yml"
-	var cf = new(ConfigFile)
+	var configFile = new(ConfigFile)
 
 	file, err := os.Open(confPath)
 	if err != nil {
@@ -34,12 +34,12 @@ func appConf() *ConfigFile {
 		log.Fatal(err)
 	}
 
-	if err = yaml.Unmarshal(yamlByte, cf); err != nil {
+	if err = yaml.Unmarshal(yamlByte, configFile); err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Println(cf)
-	return cf
+	fmt.Println(configFile)
+	return configFile
 
 }
 
