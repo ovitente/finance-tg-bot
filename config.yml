@@ -1,0 +1,9 @@
+google_sheets:
+  token: asdasd
+
+telegram:
+  token: asd
+  bot_id: x8
+
+allowed_users:
+  - ivan.kostrubin
