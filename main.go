@@ -10,17 +10,21 @@ import (
 )
 
 type ConfigFile struct {
-	GoogleSheets string `yaml:google_sheets_token`
-	Telegram     TgOpts `yaml:telegram`
+	GoogleSheets GSheets `yaml:"google_sheets"`
+	Telegram     TgOpts  `yaml:"telegram"`
 	// AllowedUsers []string `yaml:allowed_users`
 }
 
+type GSheets struct {
+	Token string `yaml:"token,omitempty"`
+	ID    string `yaml:"id,omitempty"`
+}
 type TgOpts struct {
-	Token string `yaml:token`
-	BotId string `yaml:bot_id`
+	Token string `yaml:"token"`
+	BotId string `yaml:"bot_id"`
 }
 
-func appConf() *ConfigFile {
+func main() {
 	var confPath = "./config.yml"
 	var configFile = new(ConfigFile)
 
@@ -38,11 +42,9 @@ func appConf() *ConfigFile {
 		log.Fatal(err)
 	}
 
-	fmt.Println(configFile)
-	return configFile
+	fmt.Println(configFile.GoogleSheets.Token)
+	fmt.Println(configFile.GoogleSheets.ID)
+	fmt.Println(configFile.Telegram.Token)
+	fmt.Println(configFile.Telegram.BotId)
 
-}
-
-func main() {
-	appConf()
 }
