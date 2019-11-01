@@ -96,5 +96,3 @@ func appConf() *ConfigFile {
 func main() {
 	appConf()
 	telegramSendBack()
-
-}
