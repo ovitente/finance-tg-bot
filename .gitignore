@@ -4,3 +4,4 @@ bot-tg-money
 .vscode/launch.json
 config.yml
 finance-tg-bot
+client_secret.json
