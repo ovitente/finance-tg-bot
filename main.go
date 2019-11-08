@@ -37,27 +37,6 @@ func checkError(err error) {
 	if err != nil {
 		panic(err.Error())
 	}
-
-	// TELEGRAM
-	configFile := appConf()
-	token := configFile.Telegram.Token
-
-	b, err := tb.NewBot(tb.Settings{
-		Token:  token,
-		URL:    "https://api.telegram.org",
-		Poller: &tb.LongPoller{Timeout: 10 * time.Second},
-	})
-
-	if err != nil {
-		log.Fatal(err)
-		return
-	}
-
-	b.Handle("/hello", func(m *tb.Message) {
-		b.Send(m.Sender, "hello world")
-	})
-
-	b.Start()
 }
 
 func appConf() *ConfigFile {
@@ -79,28 +58,55 @@ func appConf() *ConfigFile {
 		log.Fatal(err)
 	}
 
-	fmt.Println(configFile.GoogleSheets.Token)
-	fmt.Println(configFile.GoogleSheets.ID)
-	fmt.Println(configFile.Telegram.Token)
-	fmt.Println(configFile.Telegram.BotID)
+	// fmt.Println(configFile.GoogleSheets.Token)
+	// fmt.Println(configFile.GoogleSheets.ID)
+	// fmt.Println(configFile.Telegram.Token)
+	// fmt.Println(configFile.Telegram.BotID)
 
-	// TODO: refactor return
 	return configFile
+}
+
+func telegramAnswerToUser() {
+	// TODO: Описать входящие и возвратные аргументы
+
+	configFile := appConf()
+	token := configFile.Telegram.Token
+
+	b, err := tb.NewBot(tb.Settings{
+		Token:  token,
+		URL:    "https://api.telegram.org",
+		Poller: &tb.LongPoller{Timeout: 10 * time.Second},
+	})
+
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+
+	b.Handle("/hello", func(m *tb.Message) {
+		b.Send(m.Sender, "hello world")
+	})
+
+	b.Start()
 
 }
 
 func main() {
+
 	// GOOGLE SHEETS
 	data, err := ioutil.ReadFile("client_secret.json")
 	checkError(err)
+
 	conf, err := google.JWTConfigFromJSON(data, spreadsheet.Scope)
 	checkError(err)
+
 	client := conf.Client(context.TODO())
 
 	service := spreadsheet.NewServiceWithClient(client)
-	configFile := appConf()
+	configFile = appConf()
 	spreadsheet, err := service.FetchSpreadsheet(configFile.GoogleSheets.ID)
 	checkError(err)
+
 	sheet, err := spreadsheet.SheetByIndex(0)
 	checkError(err)
 
