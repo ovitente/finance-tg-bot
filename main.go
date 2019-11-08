@@ -14,23 +14,23 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// ConfigFile Init structure for config file.
+// ConfigFile : Init structure for config file.
 type ConfigFile struct {
 	GoogleSheets GSheets `yaml:"google_sheets"`
 	Telegram     TgOpts  `yaml:"telegram"`
 	// AllowedUsers []string `yaml:allowed_users`
 }
 
-// Sheets struct.
+// GSheets : Sheets struct for Config File.
 type GSheets struct {
 	Token string `yaml:"token,omitempty"`
 	ID    string `yaml:"id,omitempty"`
 }
 
-// Telegram Options struct.
+// TgOpts : Telegram Options struct.
 type TgOpts struct {
 	Token string `yaml:"token"`
-	BotId string `yaml:"bot_id"`
+	BotID string `yaml:"bot_id"`
 }
 
 func checkError(err error) {
@@ -39,7 +39,8 @@ func checkError(err error) {
 	}
 
 	// TELEGRAM
-	token := os.Getenv("TOKEN")
+	configFile := appConf()
+	token := configFile.Telegram.Token
 
 	b, err := tb.NewBot(tb.Settings{
 		Token:  token,
@@ -61,10 +62,10 @@ func checkError(err error) {
 
 func appConf() *ConfigFile {
 
-	var confPath = "./config.yml"
+	var configFilePath = "./config.yml"
 	var configFile = new(ConfigFile)
 
-	file, err := os.Open(confPath)
+	file, err := os.Open(configFilePath)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -81,7 +82,7 @@ func appConf() *ConfigFile {
 	fmt.Println(configFile.GoogleSheets.Token)
 	fmt.Println(configFile.GoogleSheets.ID)
 	fmt.Println(configFile.Telegram.Token)
-	fmt.Println(configFile.Telegram.BotId)
+	fmt.Println(configFile.Telegram.BotID)
 
 	// TODO: refactor return
 	return configFile
@@ -89,7 +90,6 @@ func appConf() *ConfigFile {
 }
 
 func main() {
-	appConf()
 	// GOOGLE SHEETS
 	data, err := ioutil.ReadFile("client_secret.json")
 	checkError(err)
@@ -98,7 +98,8 @@ func main() {
 	client := conf.Client(context.TODO())
 
 	service := spreadsheet.NewServiceWithClient(client)
-	spreadsheet, err := service.FetchSpreadsheet(config)
+	configFile := appConf()
+	spreadsheet, err := service.FetchSpreadsheet(configFile.GoogleSheets.ID)
 	checkError(err)
 	sheet, err := spreadsheet.SheetByIndex(0)
 	checkError(err)
@@ -110,7 +111,7 @@ func main() {
 	}
 
 	// Update cell content
-	sheet.Update(0, 0, "hogehoge")
+	sheet.Update(0, 0, "CELL EDITED WITH GOLANG")
 
 	// Make sure call Synchronize to reflect the changes
 	err = sheet.Synchronize()
