@@ -103,7 +103,7 @@ func main() {
 	client := conf.Client(context.TODO())
 
 	service := spreadsheet.NewServiceWithClient(client)
-	configFile = appConf()
+	configFile := appConf()
 	spreadsheet, err := service.FetchSpreadsheet(configFile.GoogleSheets.ID)
 	checkError(err)
 
