@@ -122,4 +122,7 @@ func main() {
 	// Make sure call Synchronize to reflect the changes
 	err = sheet.Synchronize()
 	checkError(err)
+
+	// Init telegram bot
+	telegramAnswerToUser()
 }
