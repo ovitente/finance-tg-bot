@@ -1,10 +1,8 @@
 google_sheets:
-  id: fnhliasf98hspfps9hf
-  token: asdasd
+  token: "asdasd"
+  id: "sheet id"
+  api_secret_file_name: client_secret.json
 
 telegram:
-  bot_id: x8
-  token: WOOHOO
-
-allowed_users:
-  - ivan.kostrubin
+  bot_id: "bot id"
+  token: "bot token"

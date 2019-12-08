@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -23,8 +22,9 @@ type ConfigFile struct {
 
 // GSheets : Sheets struct for Config File.
 type GSheets struct {
-	Token string `yaml:"token,omitempty"`
-	ID    string `yaml:"id,omitempty"`
+	Token             string `yaml:"token,omitempty"`
+	ID                string `yaml:"id,omitempty"`
+	APISecretFileName string `yaml:"api_secret_file_name,omitempty"`
 }
 
 // TgOpts : Telegram Options struct.
@@ -58,11 +58,6 @@ func appConf() *ConfigFile {
 		log.Fatal(err)
 	}
 
-	// fmt.Println(configFile.GoogleSheets.Token)
-	// fmt.Println(configFile.GoogleSheets.ID)
-	// fmt.Println(configFile.Telegram.Token)
-	// fmt.Println(configFile.Telegram.BotID)
-
 	return configFile
 }
 
@@ -92,9 +87,11 @@ func telegramAnswerToUser() {
 }
 
 func main() {
+	// Read config
+	configFile := appConf()
 
 	// GOOGLE SHEETS
-	data, err := ioutil.ReadFile("client_secret.json")
+	data, err := ioutil.ReadFile(configFile.GoogleSheets.APISecretFileName)
 	checkError(err)
 
 	conf, err := google.JWTConfigFromJSON(data, spreadsheet.Scope)
@@ -103,18 +100,19 @@ func main() {
 	client := conf.Client(context.TODO())
 
 	service := spreadsheet.NewServiceWithClient(client)
-	configFile := appConf()
 	spreadsheet, err := service.FetchSpreadsheet(configFile.GoogleSheets.ID)
 	checkError(err)
 
 	sheet, err := spreadsheet.SheetByIndex(0)
 	checkError(err)
 
-	for _, row := range sheet.Rows {
-		for _, cell := range row {
-			fmt.Println(cell.Value)
-		}
-	}
+	// Printing content of the whole table
+
+	// for _, row := range sheet.Rows {
+	// 	for _, cell := range row {
+	// 		fmt.Println(cell.Value)
+	// 	}
+	// }
 
 	// Update cell content
 	sheet.Update(0, 0, "CELL EDITED WITH GOLANG")
