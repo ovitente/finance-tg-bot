@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -10,62 +11,54 @@ import (
 	"golang.org/x/oauth2/google"
 	"gopkg.in/Iwark/spreadsheet.v2"
 	tb "gopkg.in/tucnak/telebot.v2"
-	"gopkg.in/yaml.v2"
 )
 
-// ConfigFile : Init structure for config file.
-type ConfigFile struct {
-	GoogleSheets GSheets `yaml:"google_sheets"`
-	Telegram     TgOpts  `yaml:"telegram"`
+// AppConfig : Init structure for config file.
+type AppConfig struct {
+	DeployToken  string
+	GoogleSheets GSheets
+	Telegram     TgOpts
 	// AllowedUsers []string `yaml:allowed_users`
 }
 
 // GSheets : Sheets struct for Config File.
 type GSheets struct {
-	Token             string `yaml:"token,omitempty"`
-	ID                string `yaml:"id,omitempty"`
-	APISecretFileName string `yaml:"api_secret_file_name,omitempty"`
+	Token             string
+	ID                string
+	APISecretFileName string
 }
 
 // TgOpts : Telegram Options struct.
 type TgOpts struct {
-	Token string `yaml:"token"`
-	BotID string `yaml:"bot_id"`
+	Token string
+	BotID string
 }
 
-func checkError(err error) {
-	if err != nil {
-		panic(err.Error())
-	}
+// PrintConfig : Self-explanatory
+func PrintConfig(Credentials *AppConfig) {
+	fmt.Printf("%+v\n", Credentials)
 }
 
-func appConf() *ConfigFile {
+// ReadConfig : Self-explanatory
+func ReadConfig() (*AppConfig, error) {
+	var Credentials = new(AppConfig)
 
-	var configFilePath = "./config.yml"
-	var configFile = new(ConfigFile)
+	Credentials.GoogleSheets.Token = os.Getenv("GSHEETS_TOKEN")
+	Credentials.GoogleSheets.ID = os.Getenv("GSHEETS_ID")
+	Credentials.GoogleSheets.APISecretFileName = "gsheets_api_secret.json"
 
-	file, err := os.Open(configFilePath)
-	if err != nil {
-		log.Fatal(err)
-	}
+	Credentials.Telegram.Token = os.Getenv("TELEGRAM_TOKEN")
+	Credentials.Telegram.BotID = os.Getenv("TELEGRAM_BOT_ID")
+	Credentials.DeployToken = os.Getenv("DEPLOY_TOKEN")
 
-	yamlByte, err := ioutil.ReadAll(file)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	if err = yaml.Unmarshal(yamlByte, configFile); err != nil {
-		log.Fatal(err)
-	}
-
-	return configFile
+	return Credentials, nil
 }
 
 func telegramAnswerToUser() {
 	// TODO: Описать входящие и возвратные аргументы
 
-	configFile := appConf()
-	token := configFile.Telegram.Token
+	Credentials := ReadConfig()
+	token := Credentials.Telegram.Token
 
 	b, err := tb.NewBot(tb.Settings{
 		Token:  token,

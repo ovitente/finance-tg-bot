@@ -2,4 +2,4 @@
 .vscode/launch.json
 /config.yml
 finance-tg-bot
-client_secret.json
+gsheets_api_secret.json
